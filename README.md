@@ -15,6 +15,8 @@ This is an introduction to a program that you can check whether the time point a
 10. You can click "Change Range" to return to previous page and set time range again.
 11. If you refresh page, and all the records will be cleared. 
 12. You can contact me by the information at footer.
-13. Thank you! Enjoy it!
+
+
+Thank you! Enjoy it!
 
 
