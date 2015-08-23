@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="author" content="EklanChen">
+
+    <title></title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Core CSS -->
+    <link href="css/From0To23.css" rel="stylesheet">
+	
+	<script src="js/jquery.js"></script>
+	<!-- Bootstrap Core JavaScript -->
+	<script src="js/bootstrap.min.js"></script>
+	<script>
+	$(document).ready(function(){
+		var  tpRecord = {};
+		var regex =  /^([01]?[0-9]|2[0-3])$/;
+		var sTime, eTime;
+		var curTR;
+		
+		$("#btnSet").click(function(){
+			sTime = $("#setSTime").val();
+			eTime = $("#setETime").val();
+
+			//put zero
+			sTime = sTime.length < 2 ? "0" + sTime : sTime;
+			eTime = eTime.length < 2 ? "0" + eTime : eTime;
+			
+			//showTimeRange
+			if(regex.test(sTime) && regex.test(eTime)){
+				var imgUrl = "images/number_x.png";
+				var sTime_arr =	sTime.split("");		
+				var eTime_arr = eTime.split("");	
+				
+				//get time images
+				$("#startTime_f").attr("src", imgUrl.replace("x", sTime_arr[0]));
+				$("#startTime_s").attr("src", imgUrl.replace("x", sTime_arr[1]));
+				$("#endTime_f").attr("src", imgUrl.replace("x", eTime_arr[0]));
+				$("#endTime_s").attr("src", imgUrl.replace("x", eTime_arr[1]));
+				//change header
+				$("#setTime").fadeOut();
+				$("#showTime").fadeIn();
+				$("#btnCheck, #timePoint").removeAttr("disabled");	
+		
+				sTime = parseInt(sTime);
+				eTime = parseInt(eTime);
+				
+				//record time range
+				curTR = sTime + "-" + eTime + "_" + (new Date()).getTime();
+				tpRecord[curTR] = [];
+				$("#sltTRRecord").append($("<option></option>").val(curTR).text(sTime + " 時から " +  eTime + " 時まで "))
+										   .val(curTR);			
+				$("#sltTPRecord").empty();
+			}
+			else{ //time invalid
+				alert("Input invalid!!! Please input the correct time.");
+				if(regex.test(sTime))
+					$("#setETime").focus();
+				else
+					$("#setSTime").focus();
+			}//else
+			
+		});
+		
+		//back to set time layout
+		$("#btnChgRange").click(function(){
+			$("#btnClear").click();
+			$("#showTime").fadeOut();
+			$("#setTime").fadeIn();
+			$("#btnCheck, #timePoint").attr("disabled", true);		
+			$("#timePoint").val("");	
+			$("#imgAnswer").attr("src",  "");
+		});
+		
+		//clear set time field
+		$("#btnClear").click(function(){
+			$("#setSTime, #setETime").val("");			
+		});
+		
+		//clear records
+		$("#btnClearR").click(function(){
+			if(confirm("Are you sure  you want to remove all the records ?")){
+				//keep the time range that show in current
+				if($("#showTime:visible").length != 0){
+					$("#sltTRRecord").val(curTR).change();
+					$("#sltTRRecord option").not(":selected").remove();
+					var temp = tpRecord[curTR].clone();
+					tpRecord = {};	
+					tpRecord[curTR] = temp;
+				}
+				else{ //clear all records
+					$("#sltTRRecord, #sltTPRecord").empty("");		
+					tpRecord = {};			
+				}		
+			}//if confirm
+			
+		});
+		
+		//clear set time field
+		$("#btnCheck").click(function(){
+			var tp = parseInt($("#timePoint").val());
+			var result = true;
+			var msg = "", imgUrl = "";
+			var recordColor = "";
+			
+			if(!regex.test(tp)){
+				alert("Input invalid!!! Please input the correct time.");
+				$("#timePoint").focus();
+				$("#imgAnswer").attr("src",  "images/warn.png");
+				return;
+			}//if
+			
+			//normal
+			if(sTime< eTime){
+				if(tp >= sTime && tp< eTime)
+					result = true;
+				else 
+					result = false;
+			}
+			//clock turnaround
+			else if(sTime> eTime){
+				if(tp < sTime && tp >= eTime)
+					result = false;
+				else 
+					result = true;
+			}
+			else {  //sTime =eTime
+				result = tp == sTime ? true : false;
+			}
+			
+			//at the range
+			if(result){
+				msg = "True!!! Congratulation :)";
+				imgUrl = "images/correct.png";
+				recordColor = "";
+			}
+			else{ //out of range
+				msg = "False!!! Maybe you should try again...";
+				imgUrl = "images/wrong.png";
+				recordColor = "red";
+			}
+			alert(msg);
+			$("#imgAnswer").attr("src", imgUrl);
+			//record time point
+			tpRecord[curTR].push({"value":tp, "color":recordColor});
+			$("#sltTPRecord").append($("<option></option>").val(tp).text(tp + " 時").css("color", recordColor));
+		});//btnCheck end
+		
+		//show the time point record that selected
+		$("#sltTRRecord").change(function(){
+			$("#sltTPRecord").empty();
+			var arrTP = tpRecord[$("#sltTRRecord").val()];
+			for(var k in arrTP){
+				var item = arrTP[k];
+				$("#sltTPRecord").append($("<option></option>").val(item.value).text(item.value + " 時").css("color", item.color));
+			}
+		});//sltTRRecord end
+		
+	});// ready end
+	</script>
+</head>
+<body>
+<header class="header-bg">
+	<div id="showTime" style="display:none">
+		<table>
+			<tr><td colspan=2><button class="btn btn-primary btn-center" id="btnChgRange">Change Range</button></td></tr>	
+			<tr><td colspan=2><h1>The time range is...</h1><br /></td></tr>
+			<tr>
+				<td><label>FROM</label></td>
+				<td><label>TO</label></td>
+			</tr>
+			<tr>
+				<td>
+					<img id="startTime_f" src="images/number_0.png" >
+					<img id="startTime_s" src="images/number_0.png" >  
+				</td>
+				<td>
+					<img id="endTime_f" src="images/number_1.png" >
+					<img id="endTime_s" src="images/number_1.png" >
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div id="setTime">
+		<table>
+			<tr><td><h1>Please set the time range in hours. (Input the number 0-23)</h1><br /></td></tr>
+			<tr>
+				<td>
+					<label>FROM</label>
+					<input type="text" class="input-style form-control" maxlength=2 id="setSTime"/> 
+					<label>TO</label>
+					<input type="text" class="input-style form-control" maxlength=2 id="setETime"/> 
+				</td>
+			</tr>
+			<tr>
+				<td>
+				<br />
+					<button class="btn btn-primary btn-center" id="btnSet">Set</button>
+					<button class="btn btn-primary btn-center" id="btnClear">Clear</button>
+				
+				</td>
+			</tr>
+		</table>
+	
+	</div>
+</header>
+<br /><br />
+<div class="container">
+	<table id="tbRecord">
+		<tr>
+			<td colspan=2>
+				<label>Please input a time point in hours (0-23) :</label>
+				<input type="text" class="form-control" maxlength=2  id="timePoint" disabled /> 	
+				<img id="imgAnswer"  style="margin-left:10px">
+			</td>
+		</tr>
+		<tr>
+			<td colspan=2>
+				<button class="btn btn-danger btn-center" id="btnCheck" disabled>Check</button>
+				<button class="btn btn-success btn-center" id="btnClearR">Clear Record</button>
+				<br /><br /><br /><br />
+			</td>
+			
+		</tr>
+		<tr>
+			<td>
+				<h4>Time range record<h4>
+				<select id="sltTRRecord" class="form-control"  size=10></select>
+			</td>
+			<td>
+				<h4>Time point record<h4>
+				<select id="sltTPRecord" class="form-control"  size=10></select>
+			</td>
+		
+		</tr>
+	</table>
+</div>
+
+</body>
+<div class="footer-content">
+	<br />
+	
+	<div class="footer-container">
+		Icons made by <a href="http://www.flaticon.com/authors/alessio-atzeni" title="Alessio Atzeni">Alessio Atzeni</a> 
+		from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a>             
+		is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a> 
+		
+	</div>
+	<div>Background image made by <a href="http://www.gluszczenko.com/"  title="Gluszczenko">Gluszczenko</a>
+			from  <a href="http://subtlepatterns.com/ps-neutral/" title="Flaticon">subtlepatterns.com.</a>
+	</div>
+	<br />
+	<div>
+				Page designed by <a href="https://github.com/eklan" title="Eklan">Eklan</a>
+				<a href="https://github.com/eklan" target="_blank"><img src="images/git.png" class="info-style" ></a>
+				<a href="https://www.facebook.com/echelen"  target="_blank"><img src="images/FB.png" class="info-style" ></a>
+				<a href="mailto:foreveracg.jp@gmail.com" target="_blank"><img src="images/mail.png" class="info-style" ></a>
+	</div>
+	<br />
+</div>
+</html>
