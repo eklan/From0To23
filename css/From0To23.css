@@ -1,0 +1,94 @@
+body{
+	text-align:center;
+	background-image:url('ps_neutral.png') ;
+	filter:alpha(opacity=30);
+	-moz-opacity:0.9;
+	opacity:0.9; 
+	-khtml-opacity: 0.9;
+	
+}
+
+
+label{
+	padding:10px;
+	font-size:18px;
+	margin:5px;
+}
+
+.header-bg {
+    display: block;
+    width: 100%;
+	padding:30px;
+    text-align: center;
+	color:#607D8B;
+    background-color:gainsboro;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+
+}
+
+.btn-center{
+	margin:10px;
+}
+
+.input-style{
+	width:180px; 
+	height:200px;
+	font-size:128px;
+	display:inline;
+	
+}
+
+#showTime img{
+	margin:5px;
+}
+
+#showTime label, #setTime label {
+	font-size:24px;
+	float:center;
+}
+
+#showTime table, #setTime table{
+	width:100%;
+}
+
+#tbRecord{
+	text-align:center;
+	display:inline-block;
+
+}
+
+#tbRecord input{
+	width:50px;
+	display:inline;
+	font-size:18px;
+}
+
+#sltTRRecord{
+	width:200px;
+	margin:10px;
+	display:inline;
+}
+
+#sltTPRecord{
+	width:100px;
+	margin:10px;
+	display:inline;
+}
+
+.footer-content{
+	background-color:gray;
+	color:white;
+}
+
+.footer-content a{
+	color:lemonchiffon;
+}
+
+.info-style{
+	width:32px;
+	height:32px;
+	margin:2px;
+}
